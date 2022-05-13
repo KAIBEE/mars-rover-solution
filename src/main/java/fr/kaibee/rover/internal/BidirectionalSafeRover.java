@@ -22,7 +22,7 @@ public class BidirectionalSafeRover implements Rover {
 
     private Coordinate coordinate;
     private Direction direction;
-    private final List<Coordinate> obstaclesCoordinates; // If there were more context to set, we should extract it to an contextual object like "world" or "grid".
+    private final Set<Coordinate> obstaclesCoordinates; // If there were more context to set, we should extract it to an contextual object like "world" or "grid".
 
     public BidirectionalSafeRover(int x, int y, char direction, Coordinate... obstacleCoordinates) {
         this.direction = Direction.create(direction);
@@ -30,9 +30,9 @@ public class BidirectionalSafeRover implements Rover {
         this.obstaclesCoordinates = obstaclesFrom(obstacleCoordinates);
     }
 
-    private List<Coordinate> obstaclesFrom(Coordinate[] obstacleCoordinates) {
+    private Set<Coordinate> obstaclesFrom(Coordinate[] obstacleCoordinates) {
         obstacleCoordinates = Objects.requireNonNullElseGet(obstacleCoordinates, () -> new Coordinate[0]);
-         return List.of(obstacleCoordinates);
+         return Set.of(obstacleCoordinates);
     }
 
     @Override
