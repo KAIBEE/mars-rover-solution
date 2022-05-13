@@ -232,7 +232,7 @@ public class RoverTest {
         char invalidCommand = 'z';
         givenRover(5, 3, 'E')
                 .when(invalidCommand)
-                .thenThrows(() -> new IllegalArgumentException("Invalid command. Should be l,r,f or b"));
+                .thenThrows(IllegalArgumentException.class, "Invalid command. Should be l,r,f or b");
     }
 
     @Test
@@ -240,19 +240,19 @@ public class RoverTest {
         givenRover(5, 4, 'N')
                 .withObstacle(5, 5)
                 .when('f')
-                .thenThrows(() -> new ObstacleDetectedException(new Coordinate(1, 1), new Coordinate(1, 2)));
+                .thenThrows(ObstacleDetectedException.class, "Obstacle detected at Coordinate[x=5, y=5]. Rover stopped at Coordinate[x=5, y=4]");
 
         givenRover(3, 2, 'N')
                 .withObstacle(3, 3)
                 .when('f')
-                .thenThrows(() -> new ObstacleDetectedException(new Coordinate(3, 2), new Coordinate(3, 3)));
+                .thenThrows(ObstacleDetectedException.class, "Obstacle detected at Coordinate[x=3, y=3]. Rover stopped at Coordinate[x=3, y=2]");
 
         // Multiple obstacles
         givenRover(3, 2, 'N')
                 .withObstacle(5, 5)
                 .withObstacle(3, 3)
                 .when('f')
-                .thenThrows(() -> new ObstacleDetectedException(new Coordinate(3, 2), new Coordinate(3, 3)));
+                .thenThrows(ObstacleDetectedException.class, "Obstacle detected at Coordinate[x=3, y=3]. Rover stopped at Coordinate[x=3, y=2]");
     }
 
     @Test
@@ -264,7 +264,7 @@ public class RoverTest {
         givenRover(2, 2, 'N')
                 .withObstacle(3, 3)
                 .when('f', 'l', 'b')
-                .thenThrows(() -> new ObstacleDetectedException(new Coordinate(2, 3), new Coordinate(3, 3)));
+                .thenThrows(ObstacleDetectedException.class, "Obstacle detected at Coordinate[x=3, y=3]. Rover stopped at Coordinate[x=2, y=3]");
     }
 
     static class RoverAssertions {
@@ -320,11 +320,10 @@ public class RoverTest {
             return this;
         }
 
-        void thenThrows(Supplier<? extends Exception> supplier) {
-            Exception expectedException = supplier.get();
-            Exception thrownException = assertThrows(expectedException.getClass(), this::executeFirst);
-            assertThat(thrownException.getClass()).isEqualTo(expectedException.getClass());
-            assertThat(thrownException.getMessage()).isEqualTo(expectedException.getMessage());
+        void thenThrows(Class<?> expectedClassException, String expectedMessage) {
+            Exception thrownException = assertThrows(Exception.class, this::executeFirst);
+            assertThat(thrownException.getClass()).isEqualTo(expectedClassException);
+            assertThat(thrownException.getMessage()).isEqualTo(expectedMessage);
         }
 
         private void executeFirst() {
